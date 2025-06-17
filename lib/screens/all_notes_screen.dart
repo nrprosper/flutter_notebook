@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_notebook/common/scaffold_content.dart';
 import 'package:flutter_notebook/lib/colors.dart';
+import 'package:flutter_notebook/lib/note_notifier.dart';
+import 'package:flutter_notebook/screens/create_note_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AllNotesScreen extends StatefulWidget {
+class AllNotesScreen extends ConsumerWidget {
   const AllNotesScreen({super.key});
 
   @override
-  State<AllNotesScreen> createState() => _AllNotesScreenState();
-}
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notesAsync = ref.watch(noteNotifierProvider);
 
-class _AllNotesScreenState extends State<AllNotesScreen> {
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -18,75 +19,49 @@ class _AllNotesScreenState extends State<AllNotesScreen> {
         title: Text(
           "All Notes",
           style: TextStyle(
-            color: NColors.boldText,
-            fontWeight: FontWeight.w900
+              color: NColors.boldText,
+              fontWeight: FontWeight.w900
           ),
         ),
         actions: [
           IconButton(
-              onPressed: () => {}, 
+              onPressed: () => {},
               icon: Icon(Icons.search)
           )
         ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(
-              height: 221,
-              width: 268,
-              child: Image(image: AssetImage('assets/tasks_placeholder.png')),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 34, horizontal: 34),
-              child: Column(
-                spacing: 12,
-                children: [
-                  Text(
-                    "Create Your First Note",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w900,
-                        color: NColors.boldText,
-                        fontSize: 24
-                    ),
-                  ),
-                  Text(
-                    "Add a note about anything (your thoughts on climate change, or your history essay) and share it witht the world.",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 64,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => AllNotesScreen())
-                          );
-                        },
-                        child: Text(
-                          "Create A Note",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                              fontSize: 20,
-                              letterSpacing: 3
-                          ),
-                        )
-                    ),
-                  )
-                ],
+      body: notesAsync.when(
+        data: (notes) {
+          if (notes.isEmpty) {
+            return Center(
+              child: ScaffoldContent(
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateNoteScreen()),
+                ),
+                imagePath: "assets/tasks_placeholder.png",
+                title: "Create Your First Note",
+                description: "Add a note about anything (your thoughts on climate change, or your history essay) and share it with the world.",
+                buttonText: "Create A Note",
               ),
-            )
-          ],
-        ),
+            );
+          }
+          return ListView.builder(
+            itemCount: notes.length,
+            itemBuilder: (context, index) {
+              final note = notes[index];
+              return ListTile(
+                title: Text('Note ${note.id}'),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CreateNoteScreen(noteId: note.id)),
+                ),
+              );
+            },
+          );
+        },
+        loading: () => Center(child: CircularProgressIndicator()),
+        error: (e, st) => Center(child: Text('Error: $e')),
       ),
     );
   }

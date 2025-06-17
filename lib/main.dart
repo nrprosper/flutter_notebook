@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_notebook/lib/colors.dart';
 import 'package:flutter_notebook/screens/on_boarding.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 void main() {
-  runApp(const Application());
+  runApp(ProviderScope(child: Application()));
 }
 
 
@@ -45,6 +47,9 @@ class Application extends StatelessWidget {
         )
       ),
       debugShowCheckedModeBanner: false,
+      localizationsDelegates: [
+        FlutterQuillLocalizations.delegate
+      ],
       home: OnBoarding(),
     );
   }
