@@ -64,11 +64,11 @@ class AllNotesScreen extends ConsumerWidget {
                     final document = Document.fromDelta(delta);
                     final plainText = document.toPlainText();
                     return Card(
-                      elevation: 4,
+                      elevation: 2,
                       color: NColors.bgColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Colors.grey.shade100),
+                        side: BorderSide(color: Colors.grey.shade300),
                       ),
                       child: InkWell(
                         onTap: () => Navigator.push(
@@ -93,6 +93,14 @@ class AllNotesScreen extends ConsumerWidget {
                                 plainText,
                                 maxLines: 9,
                                 overflow: TextOverflow.ellipsis,
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                note.createdAt.toLocal().toString().split('.')[0],
+                                style: const TextStyle(
+                                  fontSize: 10,
+                                  color: Colors.black45,
+                                ),
                               ),
                             ],
                           ),
