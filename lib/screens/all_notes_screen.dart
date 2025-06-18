@@ -78,6 +78,28 @@ class AllNotesScreen extends ConsumerWidget {
                                 CreateNoteScreen(noteId: note.id),
                           ),
                         ),
+                        onLongPress: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Delete Note'),
+                              content: const Text('Are you sure you want to delete this note?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, false),
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('Delete'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirm == true) {
+                            await ref.read(noteNotifierProvider.notifier).deleteNote(note.id);
+                          }
+                        },
                         child: Padding(
                           padding: EdgeInsets.all(8),
                           child: Column(
@@ -124,7 +146,7 @@ class AllNotesScreen extends ConsumerWidget {
                   ),
                   child: Text(
                     'Add A Note',
-                    style: TextStyle(color: NColors.boldText),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
               ),

@@ -44,7 +44,14 @@ class Application extends StatelessWidget {
               )
             )
           ),
-        )
+        ),
+        dialogTheme: DialogThemeData(
+          backgroundColor: NColors.bgColor,
+          surfaceTintColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
       ),
       debugShowCheckedModeBanner: false,
       localizationsDelegates: [
